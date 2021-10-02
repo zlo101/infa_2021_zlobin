@@ -10,12 +10,12 @@ rect(screen, (224, 224, 224), (0, 0, 400, 400))
 circle(screen, (255, 255, 0), (200, 200), 100)
 circle(screen, (0, 0, 0), (200, 200), 100, 3)
 
-circle(screen, (255, 0, 0), (160, 175), 20)   # left eye
+circle(screen, (255, 0, 0), (160, 175), 20)   # left eye _change_
 circle(screen, (0, 0, 0), (160, 175), 20, 2)
 
 circle(screen, (0, 0, 0), (160, 175), 10)
 
-circle(screen, (255, 0, 0), (240, 175), 15)   # right eye
+circle(screen, (255, 0, 0), (240, 175), 15)   # right eye _change_
 circle(screen, (0, 0, 0), (240, 175), 15, 2)
 
 circle(screen, (0, 0, 0), (240, 175), 7)
