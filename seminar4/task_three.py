@@ -17,9 +17,8 @@ dark_grey = (77, 77, 77)
 
 def screen_creator(x):
     """
-
+creates the screen
     :param x: screen length on x axis
-    :return: creates the screen
     """
     # creates the screen and fills in the background
 
@@ -33,13 +32,12 @@ def screen_creator(x):
 
 def ellipse_rotation(dx, dy, width, ind, color):
     """
-
+creates the surface and ellipse on it
     :param dx: semi-major axis
     :param dy: semi-minor axis
     :param width: line width
     :param ind: +1: conterclockwise rotation, -1: clockwise rotation
     :param color:
-    :return:
     """
     # the indicator is used to indicate in what direction to rotate
 
@@ -62,15 +60,13 @@ def ellipse_rotation(dx, dy, width, ind, color):
 
 def human(x, y, dx, scrn):
     """
-
+draws a human
     :param x: coordinate on x axis
     :param y: coordinate on y axis
     :param dx: human width
     :param scrn: picks the surface to draw on
     :return: 
     """
-    # draws a human in a rectangular frame with the starting point in (x, y), the width being dx, and the height dy
-
     # finding the value of dy through dx:
     dy = round(1.19 * dx)
 
@@ -118,19 +114,14 @@ def human_reflected(x, y, dx):
 
 def cat(x, y, dx, scrn):
     """
-
+draws a cat
     :param x: coordinate on x axis
     :param y: coordinate on y axis
     :param dx: width
     :param scrn: picks the surface to draw on
-    :return: draws a cat
     """
-    # draws a cat in a rectangular frame with the starting point in (x, y), the width being dx, and the height dy.
-
     # finding the value of dy through dx:
     dy = round(0.333 * dx)
-
-
     # the torso with limbs:
     ellipse(scrn, beige, (x + round(0.152 * dx), y + round(0.318 * dy), round(0.508 * dx), round(0.327 * dy)))
     scrn.blit(ellipse_rotation(round(0.372 * 0.9 * dx), round(0.473 * 0.9 * dy), round(0.2 * dy), 1, beige),
@@ -185,15 +176,19 @@ def cat(x, y, dx, scrn):
 
 
 def find_xcoord_on_ellipse(ycoord, cx, cy, a, b):
-    # (cx, cy) are the coordinates of the ellipse's center
-    # a, b are the half height and half width of the ellipse
-    # ycoord is the knows y-coordinate of a point on the ellipse
+    """
+finds x coordinate based on given y coodinate of the ellipse
+    :param ycoord: coordinate of the point on y axis
+    (cx, cy) are the coordinates of the ellipse's center
+    :param a: semi-minor axis
+    :param b: semi-major axis
+    """
     return cx - round(a * math.sqrt(1 - ((ycoord - cy) / b) ** 2))
 
 
 def ice_house(x, y, dx):
     """
-
+draws an ice house
     :param x: coordinate on x axis
     :param y: coordinate on y axis
     :param dx: width
