@@ -30,21 +30,22 @@ def new_ball():
     return [color, x, y, r, v_x, v_y]
 
 
-def balls(num):
+def balls(qty):
     """
     creates & returns a data set for the given number of balls
     uses the new_ball function to generate data for each ball
     """
     dataset = []
-    for j in range(num):
+    for j in range(qty):
         dataset.append(new_ball())
     return dataset
 
 
 def ball_displayer(balldata):
     """displays the balls using the data from balldata & updates the screen"""
-    for i in range(num):
-        circle(screen, balldata[i][0], (balldata[i][1], balldata[i][2]), balldata[i][3])
+    qty = len(balldata)
+    for j in range(qty):
+        circle(screen, balldata[j][0], (balldata[j][1], balldata[j][2]), balldata[j][3])
     pygame.display.update()
 
 
@@ -52,11 +53,13 @@ def click_ind(action, balldata):
     """
     returns an array of Boolean variables which reflect if the click hit this particular ball
     :param action: the event of the mouse click
+    :param balldata: the array of data of the balls
     """
     x_mouse, y_mouse = action.pos[0], action.pos[1]
     indicator = []
+    qty = len(balldata)
 
-    for j in range(num):
+    for j in range(qty):
         x_circle, y_circle, r_circle = balldata[j][1], balldata[j][2], balldata[j][3]
         if (x_mouse - x_circle) ** 2 + (y_mouse - y_circle) ** 2 <= r_circle ** 2:
             indicator.append(True)
@@ -72,8 +75,8 @@ def move(balldata):
     :param balldata: the array of data for each ball
     """
     screen.fill(BLACK)
-
-    for j in range(num):
+    qty = len(balldata)
+    for j in range(qty):
         # taking out the data of the ball and naming its elements for easier further use:
         a_ball = balldata[j]
         x_coord, y_coord = a_ball[1], a_ball[2]
