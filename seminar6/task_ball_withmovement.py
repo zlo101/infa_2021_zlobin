@@ -4,9 +4,11 @@ from random import randint
 from random import randrange
 
 pygame.init()
+pygame.font.init()
 
 FPS = 60
 screen = pygame.display.set_mode((1200, 800))
+the_font = pygame.font.SysFont('Comic Sans MS', 30)
 
 # creating an array of colors for circles:
 RED = (255, 0, 0)
@@ -88,25 +90,36 @@ def move(balldata):
         yp = y_coord + v_y
 
         # checking if the ball is about to leave the screen and giving instructions accordingly:
-        if 1200 >= xp >= 0 and 800 >= yp >= 0:
+        if 1200 - r >= xp >= r and 800 - r >= yp >= r:
             circle(screen, color, (xp, yp), r)
             a_ball[1], a_ball[2] = xp, yp
-        elif yp < 0:
+        elif yp < r:
             circle(screen, color, (xp, y_coord - v_y), r)
             a_ball[1], a_ball[2], a_ball[5] = xp, y_coord - v_y, -v_y
-        elif yp > 800:
+        elif yp > 800 - r:
             circle(screen, color, (xp, y_coord - v_y), r)
             a_ball[1], a_ball[2], a_ball[5] = xp, y_coord - v_y, -v_y
-        elif xp < 0:
+        elif xp < r:
             circle(screen, color, (x_coord - v_x, yp), r)
             a_ball[1], a_ball[2], a_ball[4] = x_coord - v_x, yp, -v_x
-        elif xp > 1200:
+        elif xp > 1200 - r:
             circle(screen, color, (x_coord - v_x, yp), r)
             a_ball[1], a_ball[2], a_ball[4] = x_coord - v_x, yp, -v_x
 
         # inserting the changed data of the ball into its place in balldata:
         balldata[j] = a_ball
 
+    pygame.display.update()
+
+
+def score_display(x, y):
+    """
+    updates the score sign on the screen
+    :param x: the number of hits
+    :param y: the number of fails
+    """
+    surface = the_font.render('Hit: {}. Missed: {}.'.format(x, y), False, (255, 255, 255))
+    screen.blit(surface, (500, 0))
     pygame.display.update()
 
 
@@ -122,8 +135,9 @@ num = randint(2, 5)
 the_balls = balls(num)
 clocky = [0] * num
 
-# displaying the ball(s):
+# displaying the ball(s) and the score:
 ball_displayer(the_balls)
+score_display(hit, miss)
 
 while not finished:
     clock.tick(FPS)
@@ -151,6 +165,8 @@ while not finished:
             clocky[i] = 0
             the_balls[i] = new_ball()
 
+    # updating the score sign:
+    score_display(hit, miss)
 
 # showing the result and displaying some nice words:
 print("You have completed the game! We sincerely hope you liked it!")
