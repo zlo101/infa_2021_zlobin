@@ -15,7 +15,7 @@ CYAN = 0x00FFCC
 BLACK = 0x000000
 WHITE = 0xFFFFFF
 GREY = 0x7D7D7D
-GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
+GAME_COLORS = [BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 # screen's parameters
 WIDTH = 800
@@ -33,26 +33,38 @@ class Ball:
         self.vy = 0
         self.color = choice(GAME_COLORS)
         self.live = 30
+        self.ind = 0
 
     def move(self):
         """Moves the ball with gravity and walls considered"""
-
+        # the value of square root of the power reduction coefficient and the gravity coefficient:
+        k = 0.8
+        g = 75
+        # calculating the projected coordinates of the ball's center:
         p_x = self.x + self.vx * (1 / FPS)
-        p_y = self.y + self.vy * (1 / FPS) + 5 * (1 / FPS) ** 2
-        if self.r <= p_x <= WIDTH - self.r and self.r <= p_y <= HEIGHT - self.r:
-            self.x += self.vx * (1 / FPS)
-            self.y += self.vy * (1 / FPS) + 5 * (1 / FPS) ** 2
-            self.vy += 10 * (1 / FPS)
-        elif WIDTH - self.r < p_x or p_x < self.r:
-            self.x -= self.vx * (1 / FPS)
-            self.y += self.vy * (1 / FPS) + 5 * (1 / FPS) ** 2
-            self.vx = (-1) * self.vx
-            self.vy += 10 * (1 / FPS)
-        elif HEIGHT - self.r < p_y or p_y < self.r:
-            self.x += self.vx * (1 / FPS)
-            self.y += (-1) * self.vy * (1 / FPS) + 5 * (1 / FPS) ** 2
-            self.vy = (-1) * self.vy
-            self.vy += 10 * (1 / FPS)
+        p_y = self.y + self.vy * (1 / FPS) + 0.5 * g * (1 / FPS) ** 2
+        # destroying the ball if its power has decreased significantly (which means it's just on the floor):
+        if self.ind > 10:
+            self.live = 0
+
+        # changing the ball's motion parameters:
+        if self.live != 0:
+            if self.r <= p_x <= WIDTH - self.r and self.r <= p_y <= HEIGHT - self.r:
+                self.x += self.vx * (1 / FPS)
+                self.y += self.vy * (1 / FPS) + 0.5 * g * (1 / FPS) ** 2
+                self.vy += g * (1 / FPS)
+            elif WIDTH - self.r < p_x or p_x < self.r:
+                self.x -= k * self.vx * (1 / FPS)
+                self.y += k * self.vy * (1 / FPS) + 0.5 * g * (1 / FPS) ** 2
+                self.vx = k * (-1) * self.vx
+                self.vy = k * self.vy + g * (1 / FPS)
+                self.ind += 1
+            elif HEIGHT - self.r < p_y or p_y < self.r:
+                self.x += self.vx * (1 / FPS)
+                self.y += (-1) * self.vy * (1 / FPS) + 0.5 * g * (1 / FPS) ** 2
+                self.vy = (-1) * self.vy
+                self.vy = k * self.vy + g * (1 / FPS)
+                self.ind += 1
 
     def draw(self):
         """draws the ball"""
@@ -82,7 +94,7 @@ class Gun:
     def __init__(self):
         """initializes an object of the class"""
         self.screen = screen
-        self.f2_power = 200
+        self.f2_power = 300
         self.f2_on = False
         self.angle = 1
         self.color = GREY
@@ -105,7 +117,7 @@ class Gun:
         new_ball.vy = self.f2_power * math.sin(self.angle)
         balls.append(new_ball)
         self.f2_on = 0
-        self.f2_power = 100
+        self.f2_power = 150
 
     def targeting(self, event):
         """Updates the angle of the gun according to the position of the mouse"""
@@ -124,8 +136,8 @@ class Gun:
     def power_up(self):
         """if the mouse is down, this raises the gun's power by 20 and changes its color to red"""
         if self.f2_on:
-            if self.f2_power < 200:
-                self.f2_power += 20
+            if self.f2_power < 300:
+                self.f2_power += 30
             self.color = RED
         else:
             self.color = GREY
@@ -135,8 +147,8 @@ class Target:
     def __init__(self):
         """initializes an object of the class"""
         self.screen = screen
-        self.x = randint(600, 780)
-        self.y = randint(300, 550)
+        self.x = randint(600, 730)
+        self.y = randint(300, 530)
         self.r = randint(10, 50)
         self.vx = randint(10, 20)
         self.vy = randint(10, 20)
@@ -194,7 +206,8 @@ while not finished:
     for t in target:
         t.draw()
     for b in balls:
-        b.draw()
+        if b.live != 0:
+            b.draw()
     pygame.display.update()
 
     clock.tick(FPS)
@@ -208,15 +221,17 @@ while not finished:
         elif event.type == pygame.MOUSEMOTION:
             gun.targeting(event)
 
-    #
     for b in balls:
-        b.move()
-        indicator = b.hit_test(target)
-        for i in range(len(indicator)):
-            if indicator[i] is True and target[i].live:
-                target[i].live = 0
-                target[i].hit()
-                target[i] = Target()
+        if b.live != 0:
+            b.move()
+            indicator = b.hit_test(target)
+            for i in range(len(indicator)):
+                if indicator[i] is True and target[i].live:
+                    target[i].live = 0
+                    target[i].hit()
+                    target[i] = Target()
     gun.power_up()
+    for t in target:
+        t.move()
 
 pygame.quit()
