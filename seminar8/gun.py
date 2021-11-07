@@ -526,7 +526,7 @@ while not finished:
 
     tank.power_up()
 
-    # moving all the objects on displayed on the screen:
+    # moving all the objects displayed on the screen:
     tank.move()
     for t in target:
         t.move()
@@ -539,7 +539,7 @@ while not finished:
         if b.alive is True:
             b.move()
 
-    # checking
+    # checking if the clocks of the temporary objects have run out:
     check_temporary(objects)
 
 pygame.quit()
